@@ -13,15 +13,19 @@ export class ArtistService {
     ) {
     }
 
-    async create() {
+    async create(dto) {
+        const artistExist = await this.artistModel.find({name: dto.name})
+        if (artistExist.length > 0) return artistExist
 
+        const artist = await this.artistModel.create({...dto})
+        return artist
     }
 
-    // async getAll(count = 0, offset = 0): Promise<Track[]> {
-    //     const tracks = await this.trackModel.find().skip(Number(offset)).limit(Number(count))
-    //     return tracks
-    // }
-    //
+    async getAll(count = 0, offset = 0): Promise<Artist[]> {
+        const tracks = await this.artistModel.find().skip(Number(offset)).limit(Number(count))
+        return tracks
+    }
+
     // async getOne(id: ObjectId): Promise<Track> {
     //     const track = await this.trackModel.findById(id).populate('comments')
     //     return track
@@ -46,10 +50,10 @@ export class ArtistService {
     //     track.save()
     // }
 
-    // async search(query: string): Promise<Track[]> {
-    //     const tracks = await this.trackModel.find({
-    //         name: {$regex: new RegExp(query, 'i')}
-    //     })
-    //     return tracks
-    // }
+    async search(query: string): Promise<Artist[]> {
+        const tracks = await this.artistModel.find({
+            name: {$regex: new RegExp(query, 'i')}
+        })
+        return tracks
+    }
 }
