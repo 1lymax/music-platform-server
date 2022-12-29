@@ -1,5 +1,5 @@
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
-import {Comment} from "./comment.schema";
+import {Comment} from "../comments/comment.schema";
 import * as mongoose from 'mongoose';
 import {Artist} from "../artist/artist.schema";
 
