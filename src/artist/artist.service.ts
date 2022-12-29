@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 
-import {Model} from "mongoose";
+import {Model, ObjectId} from "mongoose";
 import {Artist, ArtistDocument} from "./artist.schema";
 
 
@@ -21,20 +21,20 @@ export class ArtistService {
         return artist
     }
 
-    async getAll(count = 0, offset = 0): Promise<Artist[]> {
+    async getAll(count = 10, offset = 0): Promise<Artist[]> {
         const tracks = await this.artistModel.find().skip(Number(offset)).limit(Number(count))
         return tracks
     }
 
-    // async getOne(id: ObjectId): Promise<Track> {
-    //     const track = await this.trackModel.findById(id).populate('comments')
-    //     return track
-    // }
-    //
-    // async delete(id: ObjectId): Promise<ObjectId> {
-    //     const track = await this.trackModel.findByIdAndDelete(id)
-    //     return track.id
-    // }
+    async getOne(id: ObjectId): Promise<Artist> {
+        const track = await this.artistModel.findById(id).populate('tracks')
+        return track
+    }
+
+    async delete(id: ObjectId): Promise<ObjectId> {
+        const track = await this.artistModel.findByIdAndDelete(id)
+        return track.id
+    }
     //
     // async addComment(dto: CreateCommentDto): Promise<Comment> {
     //     const track = await this.trackModel.findById(dto.trackId)
@@ -51,9 +51,14 @@ export class ArtistService {
     // }
 
     async search(query: string): Promise<Artist[]> {
-        const tracks = await this.artistModel.find({
+        const artists = await this.artistModel.find({
             name: {$regex: new RegExp(query, 'i')}
         })
-        return tracks
+        return artists
+    }
+
+    async update(id, dto) {
+        const artist = await this.artistModel.findByIdAndUpdate(id, dto, {new: true})
+        return artist
     }
 }
