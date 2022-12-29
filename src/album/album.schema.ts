@@ -17,10 +17,10 @@ export class Album {
     @Prop()
     picture: string;
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Artist'})
-    author: Artist;
+    @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Artist'}]})
+    artistId: Artist;
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Track'})
+    @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Track'}]})
     tracks: Track[];
 
 
