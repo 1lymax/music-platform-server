@@ -7,6 +7,7 @@ import {CreateTrackDto} from "./dto/create-track.dto";
 import {CreateCommentDto} from "../comments/dto/create-comment.dto";
 import {FileService, FileType} from "../file/file.service";
 import {Artist, ArtistDocument} from "../artist/artist.schema";
+import {Album, AlbumDocument} from "../album/album.schema";
 
 
 @Injectable()
@@ -16,7 +17,7 @@ export class TrackService {
         @InjectModel(Track.name) private trackModel: Model<TrackDocument>,
         @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
         @InjectModel(Artist.name) private artistModel: Model<ArtistDocument>,
-        //@InjectModel(Album.name) private albumModel: Model<CommentDocument>,
+        @InjectModel(Album.name) private albumModel: Model<AlbumDocument>,
         private fileService: FileService
     ) {
     }
@@ -31,6 +32,11 @@ export class TrackService {
             const artist = await this.artistModel.findById(dto.artistId)
             artist.tracks.push(track)
             artist.save()
+        }
+        if (dto.albumId) {
+            const album = await this.albumModel.findById(dto.albumId)
+            album.tracks.push(track)
+            album.save()
         }
 
         return track
