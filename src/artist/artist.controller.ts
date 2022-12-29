@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post, Query} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Put, Query} from "@nestjs/common";
 import {ArtistService} from "./artist.service";
 import {CreateArtistDto} from "./dto/create-artist.dto";
 import {ObjectId} from "mongoose";
@@ -38,7 +38,7 @@ export class ArtistController {
         return this.artistService.delete(id)
     }
 
-    @Patch(':id')
+    @Put(':id')
     update(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
         return this.artistService.update(id, dto)
     }
