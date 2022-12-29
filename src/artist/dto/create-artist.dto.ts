@@ -1,3 +1,3 @@
 export class CreateArtistDto {
-    readonly name;
+    readonly name: string;
 }
