@@ -1,9 +1,10 @@
-import {Body, Controller, Delete, Get, Param, Post, Query, UploadedFiles, UseInterceptors} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFiles, UseInterceptors} from "@nestjs/common";
 import {TrackService} from "./track.service";
 import {CreateTrackDto} from "./dto/create-track.dto";
 import {ObjectId} from "mongoose";
 import {CreateCommentDto} from "../comments/dto/create-comment.dto";
 import {FileFieldsInterceptor} from "@nestjs/platform-express";
+import {UpdateAlbumDto} from "../album/dto/update-album.dto";
 
 
 @Controller('/track')
@@ -51,5 +52,24 @@ export class TrackController {
     @Post('/listen/:id')
     listen(@Param('id') id: ObjectId){
         return this.trackService.listen(id)
+    }
+
+    @Put(':id')
+    @UseInterceptors(FileFieldsInterceptor([
+        {name: 'picture', maxCount: 1},
+        {name: 'audio', maxCount: 1}
+    ]))
+    update(@UploadedFiles() files,
+           @Param('id') id: string,
+           @Body() dto: UpdateAlbumDto) {
+        const picture = files?.picture?.length ? files.picture[0] : ''
+        const audio = files?.audio?.length ? files.audio[0] : ''
+        return this.trackService.update(id, dto, picture, audio)
+    }
+
+
+    @Delete('/picture/:id')
+    deletePicture(@Param('id') id: string) {
+        return this.trackService.deletePicture(id)
     }
 }

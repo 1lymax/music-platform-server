@@ -77,4 +77,32 @@ export class TrackService {
         })
         return tracks
     }
+
+    async update(id, dto, picture, audio) {
+        if (picture) {
+            const currentTrack = await this.trackModel.findById(id)
+            this.fileService.removeFile(currentTrack.picture)
+            const picturePath = this.fileService.createFile(FileType.IMAGE, picture)
+            dto.picture = picturePath
+        }
+        if (audio) {
+            const currentTrack = await this.trackModel.findById(id)
+            this.fileService.removeFile(currentTrack.audio)
+            const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
+            dto.audio = audioPath
+        }
+        const track = await this.albumModel.findByIdAndUpdate(id, dto, {new: true})
+        return track
+    }
+
+    async deletePicture(id) {
+        const track = await this.trackModel.findById(id)
+        if (track.picture){
+            await this.fileService.removeFile(track.picture)
+            track.picture = ''
+            await track.save()
+        }
+        return track
+    }
+
 }
