@@ -3,6 +3,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as uuid from 'uuid'
 
+
 export enum FileType {
     AUDIO = 'audio',
     IMAGE = 'image'
@@ -24,17 +25,21 @@ export class FileService {
             return type + '/' + fileName
 
         }catch (e) {
+            console.log(e)
             throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     removeFile(fileName: string) {
         try {
-            const filePath = path.resolve(__dirname, '..', 'static', fileName)
-            if (fs.existsSync(filePath)) {
-                fs.rmSync(filePath)
+            if (fileName) {
+                const filePath = path.resolve(__dirname, '..', 'static', fileName)
+                if (fs.existsSync(filePath)) {
+                    fs.rmSync(filePath)
+                }
             }
         }catch (e) {
+            console.log(e)
             throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
