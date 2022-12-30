@@ -47,8 +47,24 @@ export class AlbumService {
         return album
     }
 
-    async update(id, dto) {
+    async update(id, dto, picture) {
+        if (picture) {
+            const currentAlbum = await this.albumModel.findById(id)
+            this.fileService.removeFile(currentAlbum.picture)
+            const picturePath = this.fileService.createFile(FileType.IMAGE, picture)
+            dto.picture = picturePath
+        }
         const album = await this.albumModel.findByIdAndUpdate(id, dto, {new: true})
+        return album
+    }
+
+    async deletePicture(id) {
+        const album = await this.albumModel.findById(id)
+        if (album.picture){
+            await this.fileService.removeFile(album.picture)
+            album.picture = ''
+            await album.save()
+        }
         return album
     }
 

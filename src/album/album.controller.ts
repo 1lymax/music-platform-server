@@ -54,8 +54,19 @@ export class AlbumController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
-        return this.albumService.update(id, dto)
+    @UseInterceptors(FileFieldsInterceptor([
+        {name: 'picture', maxCount: 1},
+    ]))
+    update(@UploadedFiles() files,
+           @Param('id') id: string,
+           @Body() dto: UpdateAlbumDto) {
+        const picture = files?.picture?.length ? files.picture[0] : ''
+        return this.albumService.update(id, dto, picture)
+    }
+
+    @Delete('/picture/:id')
+    deletePicture(@Param('id') id: string) {
+        return this.albumService.deletePicture(id)
     }
 
 }
