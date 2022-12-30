@@ -52,9 +52,9 @@ export class TrackService {
         return track
     }
 
-    async delete(id: ObjectId): Promise<ObjectId> {
-        const track = await this.trackModel.findByIdAndDelete(id)
-        return track.id
+    async delete(id: ObjectId): Promise<Track> {
+        const deletedTrack = await this.trackModel.findByIdAndDelete(id)
+        return deletedTrack
     }
 
     async addComment(dto: CreateCommentDto): Promise<Comment> {
@@ -91,7 +91,7 @@ export class TrackService {
             const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
             dto.audio = audioPath
         }
-        const track = await this.albumModel.findByIdAndUpdate(id, dto, {new: true})
+        const track = await this.trackModel.findByIdAndUpdate(id, dto, {new: true})
         return track
     }
 
