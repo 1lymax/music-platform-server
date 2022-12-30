@@ -11,7 +11,6 @@ export class AlbumService {
 
     constructor(
         @InjectModel(Album.name) private albumModel: Model<AlbumDocument>,
-        //@InjectModel(Track.name) private trackModel: Model<TrackDocument>,
         private fileService: FileService
     ) {
     }
@@ -44,10 +43,6 @@ export class AlbumService {
     }
 
     async delete(id: ObjectId): Promise<Album> {
-        // const albumTracks = await this.trackModel.find({albumId: id})
-        // albumTracks.map(track => {
-        //     track.albumId = ''
-        // })
         const album = await this.albumModel.findByIdAndDelete(id)
         return album
     }
