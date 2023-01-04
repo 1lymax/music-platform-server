@@ -38,7 +38,7 @@ export class AlbumController {
     }
 
     @Get('/search')
-    search(@Query('query') query: string) {
+    search(@Query() query: string) {
         return this.albumService.search(query)
     }
 
@@ -46,7 +46,6 @@ export class AlbumController {
     getOne(@Param('id') id: ObjectId) {
         return this.albumService.getOne(id)
     }
-
 
     @Delete(':id')
     delete(@Param('id') id: ObjectId) {

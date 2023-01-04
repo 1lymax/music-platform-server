@@ -35,10 +35,16 @@ export class AlbumService {
         return album
     }
 
-    async search(query: string): Promise<Album[]> {
-        const albums = await this.albumModel.find({
-            name: {$regex: new RegExp(query, 'i')}
-        })
+    async search(query: any): Promise<Album[]> {
+        let queryCond: any = {}
+        if(query.name){
+            queryCond.name={$regex:query.name,$options:"i"};
+        }
+        if(query.albumId){
+            queryCond.albumId=query.albumId;
+        }
+
+        const albums = await this.albumModel.find(queryCond)
         return albums
     }
 
