@@ -40,11 +40,17 @@ export class AlbumService {
         if(query.name){
             queryCond.name={$regex:query.name,$options:"i"};
         }
-        if(query.albumId){
-            queryCond.albumId=query.albumId;
+        if(query.artistId){
+            queryCond.artistId=query.artistId;
         }
-
         const albums = await this.albumModel.find(queryCond)
+        return albums
+    }
+
+    async searchByArtist(query: any): Promise<Album[]> {
+        if (!query.artistId)
+            return []
+        const albums = await this.albumModel.find({artistId: query.artistId})
         return albums
     }
 

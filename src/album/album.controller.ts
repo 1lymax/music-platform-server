@@ -42,6 +42,11 @@ export class AlbumController {
         return this.albumService.search(query)
     }
 
+    @Get('/search/artist')
+    searchByArtist(@Query() query: string) {
+        return this.albumService.searchByArtist(query)
+    }
+
     @Get(':id')
     getOne(@Param('id') id: ObjectId) {
         return this.albumService.getOne(id)
