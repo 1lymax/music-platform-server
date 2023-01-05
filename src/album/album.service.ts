@@ -47,7 +47,7 @@ export class AlbumService {
         return albums
     }
 
-    async searchByArtist(query: any): Promise<Album[]> {
+    async filterByArtist(query: any): Promise<Album[]> {
         if (!query.artistId)
             return []
         const albums = await this.albumModel.find({artistId: query.artistId})

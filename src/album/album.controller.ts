@@ -43,8 +43,8 @@ export class AlbumController {
     }
 
     @Get('/search/artist')
-    searchByArtist(@Query() query: string) {
-        return this.albumService.searchByArtist(query)
+    filterByArtist(@Query() query: string) {
+        return this.albumService.filterByArtist(query)
     }
 
     @Get(':id')
