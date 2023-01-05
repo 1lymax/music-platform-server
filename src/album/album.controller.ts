@@ -28,7 +28,10 @@ export class AlbumController {
         {name: 'picture', maxCount: 1},
     ]))
     create(@UploadedFiles() files, @Body() dto: CreateAlbumDto) {
-        return this.albumService.create(dto, files.picture[0])
+        return this.albumService.create(
+            dto,
+            files.picture.length ? files.picture[0]: null
+        )
     }
 
     @Get()
