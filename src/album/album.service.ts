@@ -19,7 +19,8 @@ export class AlbumService {
         const albumExist = await this.albumModel.find({name: dto.name, albumId: dto.albumId})
         if (albumExist.length > 0) return albumExist
 
-        const picturePath = this.fileService.createFile(FileType.IMAGE, picture)
+        let picturePath
+        if (picture) picturePath = this.fileService.createFile(FileType.IMAGE, picture)
 
         const album = await this.albumModel.create({...dto, picture: picturePath})
         return album
