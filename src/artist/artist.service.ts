@@ -3,21 +3,26 @@ import {InjectModel} from "@nestjs/mongoose";
 
 import {Model, ObjectId} from "mongoose";
 import {Artist, ArtistDocument} from "./artist.schema";
+import {FileService, FileType} from "../file/file.service";
 
 
 @Injectable()
 export class ArtistService {
 
     constructor(
-        @InjectModel(Artist.name) private artistModel: Model<ArtistDocument>
+        @InjectModel(Artist.name) private artistModel: Model<ArtistDocument>,
+        private fileService: FileService
     ) {
     }
 
-    async create(dto) {
+    async create(dto, picture) {
         const artistExist = await this.artistModel.find({name: dto.name})
         if (artistExist.length > 0) return artistExist
 
-        const artist = await this.artistModel.create({...dto})
+        let picturePath
+        if (picture) picturePath = this.fileService.createFile(FileType.IMAGE, picture)
+
+        const artist = await this.artistModel.create({...dto, picture: picturePath})
         return artist
     }
 
