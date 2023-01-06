@@ -19,7 +19,7 @@ export class ArtistController {
         console.log(dto)
         return this.artistService.create(
             dto,
-            files.picture.length ? files.picture[0]: null)
+            files?.picture?.length ? files.picture[0]: null)
     }
 
     @Get()
