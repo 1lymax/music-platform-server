@@ -26,8 +26,14 @@ export class ArtistService {
         return artist
     }
 
-    async getAll(count = 10, offset = 0): Promise<Artist[]> {
-        const tracks = await this.artistModel.find().skip(Number(offset)).limit(Number(count))
+    async getAll(count = 0, offset = 0): Promise<Artist[]> {
+        let tracks
+        if (count) {
+            tracks = await this.artistModel.find().skip(Number(offset)).limit(Number(count))
+        } else {
+            tracks = await this.artistModel.find().skip(Number(offset))
+        }
+
         return tracks
     }
 
