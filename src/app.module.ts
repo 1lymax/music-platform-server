@@ -6,9 +6,9 @@ import {MongooseModule} from "@nestjs/mongoose";
 import {TrackModule} from "./track/track.module";
 import {AlbumModule} from "./album/album.module";
 import {ArtistModule} from "./artist/artist.module";
-import { ServeStaticModule } from "@nestjs/serve-static";
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './users/user.module';
+import {ServeStaticModule} from "@nestjs/serve-static";
+import {AuthModule} from './auth/auth.module';
+import {UserModule} from './users/user.module';
 import {AppController} from "./app.controller";
 
 @Module( {
@@ -23,6 +23,6 @@ import {AppController} from "./app.controller";
         AuthModule,
         UserModule
     ],
-    controllers: [AppController]
+    controllers: [AppController],
 })
 export class AppModule {}
