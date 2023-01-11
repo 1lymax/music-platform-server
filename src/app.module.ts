@@ -8,11 +8,12 @@ import {AlbumModule} from "./album/album.module";
 import {ArtistModule} from "./artist/artist.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './users/user.module';
+import {AppController} from "./app.controller";
 
 @Module( {
     imports: [
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
         ServeStaticModule.forRoot({rootPath: path.resolve(__dirname, 'static'),}),
         MongooseModule.forRoot(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5etmffb.mongodb.net/?retryWrites=true&w=majority`),
         TrackModule,
@@ -20,7 +21,8 @@ import { UsersModule } from './users/users.module';
         ArtistModule,
         AlbumModule,
         AuthModule,
-        UsersModule
-    ]
+        UserModule
+    ],
+    controllers: [AppController]
 })
 export class AppModule {}
