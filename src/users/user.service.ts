@@ -12,8 +12,8 @@ export class UserService {
         @InjectModel(User.name) private userModel: Model<UserDocument>,
     ) {}
 
-    async findOne(email: string): Promise<User> {
-        const user = await this.userModel.findOne({ email }).lean()
+    async findOneByEmail(email: string): Promise<User> {
+        const user = await this.userModel.findOne({ email: email }).lean()
         return user
     }
 
