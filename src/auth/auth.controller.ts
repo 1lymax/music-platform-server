@@ -1,4 +1,4 @@
-import {BadRequestException, Controller, Get, HttpStatus, Post, Req, Res, UseGuards} from "@nestjs/common";
+import {BadRequestException, Controller, Get, HttpStatus, Post, Query, Req, Res, UseGuards} from "@nestjs/common";
 import {AuthService} from "./auth.service";
 import {LocalAuthGuard} from "./local-auth.guard";
 import {GoogleOauthGuard} from "./google-oauth.guard";
@@ -11,10 +11,10 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Req() req, @Res({passthrough: true}) res: Response) {
+    async login(@Req() req, @Res({ passthrough: true }) res: Response) {
         const token = this.authService.generateJwt(req.user)
         if (this.setCookie(res, token))
-            res.status(HttpStatus.OK)
+            res.json({ access_token: token })
     }
 
     @Get('google')
@@ -24,23 +24,26 @@ export class AuthController {
 
     @Get('google/callback')
     @UseGuards(GoogleOauthGuard)
-    async googleOauthCallback(@Req() req, @Res() res: Response) {
-        const token = this.authService.signIn(req.user)
-        if (this.setCookie(res, token))
-            res.status(HttpStatus.OK)
+    async googleOauthCallback(@Req() req, @Res() res: Response, @Query('back') back) {
+        const token = await this.authService.signIn(req.user)
+        this.setCookie(res, token)
+        res.redirect(back)
+        res.status(HttpStatus.OK)
+        res.end()
+
     }
 
-    setCookie (res, token) {
+    setCookie(res, token) {
         try {
             res.cookie('access_token', token, {
                 maxAge: 2592000000,
                 sameSite: true,
                 secure: false
             })
-        }catch{
+        } catch {
             throw new BadRequestException('Unauthenticated')
         }
-        return true
+        return { access_token: token }
     }
 
 }

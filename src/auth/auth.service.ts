@@ -23,9 +23,10 @@ export class AuthService {
         return null
     }
 
-    generateJwt(user: any) {
+    async generateJwt(user: any) {
         const payload = { email: user.email, sub: user._id }
-        return this.jwtService.sign(payload)
+        const jwt = await this.jwtService.signAsync(payload)
+        return jwt
     }
 
     async signIn(user) {
@@ -34,19 +35,19 @@ export class AuthService {
         }
 
         const userExists = await this.usersService.findOneByEmail(user.email)
-
         if (!userExists) {
-            return this.registerUser(user)
+            return this.createUser(user)
         }
 
         return this.generateJwt(userExists)
     }
 
-    async registerUser(user: CreateUserDto) {
+    async createUser(user: CreateUserDto) {
         try {
             const newUser = await this.usersService.createUser(user)
-            return this.generateJwt(newUser)
-        } catch {
+            return await this.generateJwt(newUser)
+        } catch(e) {
+            console.log(e)
             throw new InternalServerErrorException()
         }
     }
