@@ -11,10 +11,11 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+    async login(@Req() req, @Res() res: Response) {
         const token = await this.authService.generateJwt(req.user)
-        if (this.setCookie(res, token))
-            res.json({ access_token: token })
+        this.setCookie(res, token)
+        res.status(HttpStatus.OK)
+        res.json({ access_token: token })
     }
 
     @Get('google')

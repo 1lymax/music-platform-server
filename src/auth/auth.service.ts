@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     async generateJwt(user: any) {
-        const payload = { email: user.email, sub: user._id }
+        const payload = { email: user.email, _id: user._id, name: user.name, picture: user.picture }
         const jwt = await this.jwtService.signAsync(payload)
         return jwt
     }
