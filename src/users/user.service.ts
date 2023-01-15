@@ -33,4 +33,23 @@ export class UserService {
         const user = await this.userModel.create({ password: hashPass, ...rest })
         return user
     }
+
+    async updateUser(user, dto) {
+        const { password, ...rest } = dto
+        console.log(password)
+        let hashPass
+        if (password)
+            hashPass = { password: await bcrypt.hash(password, salt) }
+        if (rest.picture) {
+            this.fileService.removeFile(rest.picture)
+            rest.picture = this.fileService.createFile(FileType.AVATAR, rest.picture)
+        }
+
+        const updatedUser = await this.userModel.findOneAndUpdate(
+            { email: user.email },
+            { ...hashPass, ...rest },
+            { new: true }
+        )
+        return updatedUser
+    }
 }
