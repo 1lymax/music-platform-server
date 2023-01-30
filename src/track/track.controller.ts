@@ -10,7 +10,8 @@ import {UpdateAlbumDto} from "../album/dto/update-album.dto";
 @Controller('/track')
 export class TrackController {
 
-    constructor(private trackService: TrackService) {}
+    constructor(private trackService: TrackService) {
+    }
 
     @Post()
     @UseInterceptors(FileFieldsInterceptor([
@@ -18,23 +19,20 @@ export class TrackController {
         { name: 'audio', maxCount: 1 },
     ]))
     create(@UploadedFiles() files, @Body() dto: CreateTrackDto) {
-        const {picture, audio} = files
+        const { picture, audio } = files
         return this.trackService.create(
             dto,
             picture?.length ? picture[0] : null,
-            audio?.length ? audio[0]: null
+            audio?.length ? audio[0] : null
         )
     }
 
     @Get()
-    getAll(@Query('count') count: number,
-           @Query('offset') offset: number) {
-        return this.trackService.getAll(count, offset)
-    }
-
-    @Get('search')
-    search(@Query('query') query: string) {
-        return this.trackService.search(query)
+    getAll(@Query('count') count: number = 10,
+           @Query('offset') offset: number = 0,
+           @Query('q') q: string
+    ) {
+        return this.trackService.getAll(q, count, offset)
     }
 
     @Get(':id')
@@ -54,14 +52,14 @@ export class TrackController {
     }
 
     @Post('/listen/:id')
-    listen(@Param('id') id: ObjectId){
+    listen(@Param('id') id: ObjectId) {
         return this.trackService.listen(id)
     }
 
     @Put(':id')
     @UseInterceptors(FileFieldsInterceptor([
-        {name: 'picture', maxCount: 1},
-        {name: 'audio', maxCount: 1}
+        { name: 'picture', maxCount: 1 },
+        { name: 'audio', maxCount: 1 }
     ]))
     update(@UploadedFiles() files,
            @Param('id') id: string,

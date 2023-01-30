@@ -28,7 +28,7 @@ export class TrackService {
         if (audio) audioPath = this.fileService.createFile(FileType.AUDIO, audio)
         if (picture) picturePath = this.fileService.createFile(FileType.IMAGE, picture)
 
-        const track = await this.trackModel.create({...dto, listens: 0, audio: audioPath, picture: picturePath})
+        const track = await this.trackModel.create({ ...dto, listens: 0, audio: audioPath, picture: picturePath })
 
         if (dto.artistId) {
             const artist = await this.artistModel.findById(dto.artistId)
@@ -44,10 +44,13 @@ export class TrackService {
         return track
     }
 
-    async getAll(count = 10, offset = 0): Promise<Track[]> {
-        const tracks = await this.trackModel.find({
-            audio: {$nin: [null, ""]}
-        }).skip(Number(offset)).limit(Number(count))
+    async getAll(q, count, offset): Promise<Track[]> {
+        const query: any = { audio: { $nin: [null, ""] } }
+        if (q)
+            query.name = { $regex: new RegExp(query, 'i') }
+        const tracks = await this.trackModel.find(query)
+            .skip(Number(offset))
+            .limit(Number(count))
             .populate('artistId')
             .populate('albumId')
         return tracks
@@ -65,13 +68,13 @@ export class TrackService {
 
     async addComment(dto: CreateCommentDto): Promise<Comment> {
         const track = await this.trackModel.findById(dto.trackId)
-        const comment = await this.commentModel.create({...dto})
+        const comment = await this.commentModel.create({ ...dto })
         track.comments.push(comment)
         await track.save()
         return comment
     }
 
-    async listen(id: ObjectId)  {
+    async listen(id: ObjectId) {
         const track = await this.trackModel.findById(id)
         track.listens += 1
         track.save()
@@ -79,7 +82,7 @@ export class TrackService {
 
     async search(query: string): Promise<Track[]> {
         const tracks = await this.trackModel.find({
-            name: {$regex: new RegExp(query, 'i')}
+            name: { $regex: new RegExp(query, 'i') }
         })
         return tracks
     }
@@ -97,13 +100,13 @@ export class TrackService {
             const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
             dto.audio = audioPath
         }
-        const track = await this.trackModel.findByIdAndUpdate(id, dto, {new: true})
+        const track = await this.trackModel.findByIdAndUpdate(id, dto, { new: true })
         return track
     }
 
     async deletePicture(id) {
         const track = await this.trackModel.findById(id)
-        if (track.picture){
+        if (track.picture) {
             await this.fileService.removeFile(track.picture)
             track.picture = ''
             await track.save()
