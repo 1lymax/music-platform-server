@@ -18,7 +18,10 @@ export class User {
     name: string;
 
     @Prop()
-    picture: string
+    picture: string;
+
+    @Prop()
+    isAdmin: boolean;
 
     @Prop()
     provider: string;

@@ -11,6 +11,8 @@ import {AuthModule} from './auth/auth.module';
 import {UserModule} from './users/user.module';
 import {AppController} from "./app.controller";
 import {AuthController} from "./auth/auth.controller";
+import {PlaylistModule} from "./playlist/playlist.module";
+import { CaslModule } from './casl/casl.module';
 
 @Module( {
     imports: [
@@ -22,7 +24,9 @@ import {AuthController} from "./auth/auth.controller";
         ArtistModule,
         AlbumModule,
         AuthModule,
-        UserModule
+        UserModule,
+        PlaylistModule,
+        CaslModule
     ],
     controllers: [AppController, AuthController],
 })

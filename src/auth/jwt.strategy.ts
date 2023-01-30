@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         const user = await this.userService.findOneByEmail(payload.email)
 
         if (!user) throw new UnauthorizedException('Please login to continue')
-        return { userId: payload.sub, email: payload.email }
+        return { ...payload  }
     }
 
 

@@ -15,7 +15,7 @@ export class AuthService {
 
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.usersService.findOneByEmail(email)
-        const passCheck = await bcrypt.compare(password, user.password)
+        const passCheck = await bcrypt.compare(password, user?.password)
         if (user && passCheck) {
             const { password, ...result } = user
             return result
@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     async generateJwt(user: any) {
-        const payload = { email: user.email, _id: user._id, name: user.name, picture: user.picture }
+        const payload = { email: user.email, id: String(user._id), name: user.name, picture: user.picture, isAdmin: user.isAdmin }
         const jwt = await this.jwtService.signAsync(payload)
         return jwt
     }
@@ -39,7 +39,7 @@ export class AuthService {
             return this.createUser(user)
         }
 
-        return this.generateJwt(userExists)
+        return await this.generateJwt(userExists)
     }
 
     async createUser(user: CreateUserDto) {
