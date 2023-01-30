@@ -3,22 +3,22 @@ import {
     Controller,
     Delete,
     Get,
-    NotFoundException,
     Param,
     Post,
     Put,
     Query,
-    Request,
-    UnauthorizedException,
-    UploadedFiles,
     UseGuards,
-    UseInterceptors
+    UploadedFiles,
+    UseInterceptors,
+    NotFoundException,
+    UnauthorizedException
 } from "@nestjs/common";
 import {ObjectId} from "mongoose";
 import {FileFieldsInterceptor} from "@nestjs/platform-express";
 
 import {PlaylistService} from "./playlist.service";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {AuthUser} from "../decorators/user.decorator";
 import {CreatePlaylistDto} from "./dto/create-playlist.dto";
 import {UpdatePlaylistDto} from "./dto/update-playlist.dto";
 import {CaslAbilityFactory} from "../casl/casl-ability.factory/casl-ability.factory";
@@ -27,7 +27,6 @@ import {CaslAbilityFactory} from "../casl/casl-ability.factory/casl-ability.fact
 @Controller('/playlist')
 @UseGuards(JwtAuthGuard)
 export class PlaylistController {
-
     constructor(private playlistService: PlaylistService,
                 private caslAbilityFactory: CaslAbilityFactory,
     ) {}
@@ -36,11 +35,11 @@ export class PlaylistController {
     @UseInterceptors(FileFieldsInterceptor([
         { name: 'picture', maxCount: 1 },
     ]))
-    create(@UploadedFiles() files, @Body() dto: CreatePlaylistDto, @Request() req) {
+    create(@UploadedFiles() files, @Body() dto: CreatePlaylistDto, @AuthUser() user) {
         return this.playlistService.create(
             dto,
             files?.picture?.length ? files.picture[0] : null,
-            req.user
+            user
         )
     }
 
@@ -51,9 +50,9 @@ export class PlaylistController {
     async update(@UploadedFiles() files,
                  @Param('id') id: string,
                  @Body() dto: UpdatePlaylistDto,
-                 @Request() req) {
+                 @AuthUser() user) {
         const picture = files?.picture?.length ? files.picture[0] : ''
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+        const ability = this.caslAbilityFactory.createForUser(user)
         const updatedPlaylist = await this.playlistService.update(id, dto, picture, ability)
         if (!updatedPlaylist)
             throw new UnauthorizedException()
@@ -61,8 +60,8 @@ export class PlaylistController {
     }
 
     @Get(':id')
-    async getOne(@Param('id') id: ObjectId, @Request() req) {
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+    async getOne(@Param('id') id: ObjectId, @AuthUser() user) {
+        const ability = this.caslAbilityFactory.createForUser(user)
         const playlist = await this.playlistService.getOne(id, ability)
         if (!playlist)
             throw new UnauthorizedException()
@@ -82,8 +81,9 @@ export class PlaylistController {
                            @Query('count') count: number = 10,
                            @Query('offset') offset: number = 0,
                            @Param('id') id: ObjectId,
-                           @Request() req) {
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+                           @AuthUser() user) {
+        const ability = this.caslAbilityFactory.createForUser(user)
+        console.log(user)
         const playlists = await this.playlistService.getUserPlaylists(q, count, offset, id, ability)
         if (!playlists.length)
             throw new NotFoundException()
@@ -91,8 +91,8 @@ export class PlaylistController {
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: ObjectId, @Request() req) {
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+    async delete(@Param('id') id: ObjectId, @AuthUser() user) {
+        const ability = this.caslAbilityFactory.createForUser(user)
         const deletedPlaylist = await this.playlistService.delete(id, ability)
         if (!deletedPlaylist)
             throw new NotFoundException()
@@ -103,9 +103,9 @@ export class PlaylistController {
     async addTrack(
         @Param('id') id: ObjectId,
         @Param('track') trackId: ObjectId,
-        @Request() req
+        @AuthUser() user
     ) {
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+        const ability = this.caslAbilityFactory.createForUser(user)
         const playlist = await this.playlistService.addTrack(id, trackId, ability)
         if (!playlist)
             throw new UnauthorizedException()
@@ -116,9 +116,9 @@ export class PlaylistController {
     async removeTrack(
         @Param('id') id: ObjectId,
         @Param('track') trackId: ObjectId,
-        @Request() req
+        @AuthUser() user
     ) {
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+        const ability = this.caslAbilityFactory.createForUser(user)
         const playlist = await this.playlistService.removeTrack(id, trackId, ability)
         if (!playlist)
             throw new UnauthorizedException()
@@ -126,8 +126,8 @@ export class PlaylistController {
     }
 
     @Delete('/picture/:id')
-    async deletePicture(@Param('id') id: string, @Request() req) {
-        const ability = this.caslAbilityFactory.createForUser(req.user)
+    async deletePicture(@Param('id') id: string, @AuthUser() user) {
+        const ability = this.caslAbilityFactory.createForUser(user)
         const playlist = await this.playlistService.deletePicture(id, ability)
         if (!playlist)
             throw new UnauthorizedException()
