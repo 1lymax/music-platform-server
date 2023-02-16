@@ -15,16 +15,18 @@ export class AuthService {
 
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.usersService.findOneByEmail(email)
-        const passCheck = await bcrypt.compare(password, user?.password)
-        if (user && passCheck) {
-            const { password, ...result } = user
-            return result
+        if (user) {
+            const passCheck = await bcrypt.compare(password, user?.password)
+            if (user && passCheck) {
+                const { password, ...result } = user
+                return result
+            }
         }
         return null
     }
 
     async generateJwt(user: any) {
-        const payload = { email: user.email, id: String(user._id), name: user.name, picture: user.picture, isAdmin: user.isAdmin }
+        const payload = { email: user.email, _id: String(user._id), name: user.name, picture: user.picture, isAdmin: user.isAdmin }
         const jwt = await this.jwtService.signAsync(payload)
         return jwt
     }
