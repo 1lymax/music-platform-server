@@ -37,7 +37,6 @@ export class PlaylistService {
     async update(id, dto, picture, ability) {
         const currentPlaylist = await this.playlistModel.findById(id)
             .accessibleBy(ability)
-        console.log(currentPlaylist)
         if (picture && currentPlaylist) {
             //@ts-ignore
             this.fileService.removeFile(currentPlaylist.picture)
@@ -82,7 +81,6 @@ export class PlaylistService {
         let query: any = { user: id }
         if (q)
             query.name = { $regex: q, $options: "i" };
-        console.log(query)
         return this.playlistModel.find(query)
             .skip(offset)
             .limit(count)
@@ -107,31 +105,27 @@ export class PlaylistService {
 
     // }
 
-    async addTrack(id: ObjectId, trackId: ObjectId, ability) {
-        if (id && trackId) {
-            const playlist = await this.playlistModel.findById(id)
+    async addTracks(id: ObjectId, tracks: ObjectId[], ability) {
+        if (id && tracks.length > 0) {
+            const findTracks = await this.trackModel.find({ _id: { $in: tracks } })
+            const playlist = await this.playlistModel.updateOne(
+                { _id: id },
+                { $push: { tracks: { $each: findTracks } } }
+            )
                 .accessibleBy(ability)
-            if (playlist) {
-                const track = await this.trackModel.findById(trackId)
-                //@ts-ignore
-                playlist.tracks.push(track)
-                //@ts-ignore
-                playlist.save()
-                return playlist && playlist
-            }
+            return playlist
         }
         return null
     }
 
-    async removeTrack(id: ObjectId, trackId: ObjectId, ability) {
-        if (id && trackId) {
+    async removeTrack(id: ObjectId, tracks: ObjectId[], ability) {
+        if (id && tracks.length > 0) {
+            const findTracks = await this.trackModel.find({ _id: { $in: tracks } })
             const playlist = await this.playlistModel.findOneAndUpdate({ _id: id }, {
-                $pull: {
-                    tracks: trackId
-                }
+                $pull: { tracks: { $each: findTracks } }
             }, { new: true })
                 .accessibleBy(ability)
-            return playlist && playlist
+            return playlist
         }
         return null
     }

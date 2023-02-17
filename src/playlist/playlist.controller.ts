@@ -91,6 +91,7 @@ export class PlaylistController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async delete(@Param('id') id: ObjectId, @AuthUser() user) {
         const ability = this.caslAbilityFactory.createForUser(user)
         const deletedPlaylist = await this.playlistService.delete(id, ability)
@@ -99,33 +100,37 @@ export class PlaylistController {
         return deletedPlaylist
     }
 
-    @Post(':id/track/:track')
+    @Post(':id/track/add')
+    @UseGuards(JwtAuthGuard)
     async addTrack(
         @Param('id') id: ObjectId,
-        @Param('track') trackId: ObjectId,
+        @Body() dto: ObjectId[],
         @AuthUser() user
     ) {
+        console.log(dto)
         const ability = this.caslAbilityFactory.createForUser(user)
-        const playlist = await this.playlistService.addTrack(id, trackId, ability)
+        const playlist = await this.playlistService.addTracks(id, dto, ability)
         if (!playlist)
             throw new UnauthorizedException()
         return playlist
     }
 
-    @Delete(':id/track/:track')
+    @Delete(':id/track/remove')
+    @UseGuards(JwtAuthGuard)
     async removeTrack(
         @Param('id') id: ObjectId,
-        @Param('track') trackId: ObjectId,
-        @AuthUser() user
+        @AuthUser() user,
+        @Body() dto: ObjectId[]
     ) {
         const ability = this.caslAbilityFactory.createForUser(user)
-        const playlist = await this.playlistService.removeTrack(id, trackId, ability)
+        const playlist = await this.playlistService.removeTrack(id, dto, ability)
         if (!playlist)
             throw new UnauthorizedException()
         return playlist
     }
 
     @Delete('/picture/:id')
+    @UseGuards(JwtAuthGuard)
     async deletePicture(@Param('id') id: string, @AuthUser() user) {
         const ability = this.caslAbilityFactory.createForUser(user)
         const playlist = await this.playlistService.deletePicture(id, ability)

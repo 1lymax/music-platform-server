@@ -66,7 +66,6 @@ export class FileService {
         https
             .get(url, function (response) {
                 response.pipe(file);
-                console.log(file)
                 file.on('finish', function () {
                     file.close(cb);
                 });
