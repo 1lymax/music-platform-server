@@ -36,7 +36,6 @@ export class UserService {
 
     async updateUser(user, dto) {
         const { password, ...rest } = dto
-        console.log(password)
         let hashPass
         if (password)
             hashPass = { password: await bcrypt.hash(password, salt) }
