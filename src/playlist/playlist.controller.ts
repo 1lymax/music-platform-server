@@ -11,7 +11,7 @@ import {
     UploadedFiles,
     UseInterceptors,
     NotFoundException,
-    UnauthorizedException
+    UnauthorizedException, Req
 } from "@nestjs/common";
 import {ObjectId} from "mongoose";
 import {FileFieldsInterceptor} from "@nestjs/platform-express";
@@ -25,7 +25,6 @@ import {CaslAbilityFactory} from "../casl/casl-ability.factory/casl-ability.fact
 
 
 @Controller('/playlist')
-@UseGuards(JwtAuthGuard)
 export class PlaylistController {
     constructor(private playlistService: PlaylistService,
                 private caslAbilityFactory: CaslAbilityFactory,
@@ -77,13 +76,14 @@ export class PlaylistController {
     }
 
     @Get('/user/:id')
+    @UseGuards(JwtAuthGuard)
     async getUserPlaylists(@Query('q') q: string = '',
                            @Query('count') count: number = 10,
                            @Query('offset') offset: number = 0,
                            @Param('id') id: ObjectId,
+                           @Req() req,
                            @AuthUser() user) {
         const ability = this.caslAbilityFactory.createForUser(user)
-        console.log(user)
         const playlists = await this.playlistService.getUserPlaylists(q, count, offset, id, ability)
         if (!playlists.length)
             throw new NotFoundException()

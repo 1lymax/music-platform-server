@@ -1,13 +1,13 @@
+import {Model, ObjectId} from "mongoose";
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Track, TrackDocument} from "./track.schema";
-import {Model, ObjectId} from "mongoose";
-import {Comment, CommentDocument} from "../comments/comment.schema";
 import {CreateTrackDto} from "./dto/create-track.dto";
-import {CreateCommentDto} from "../comments/dto/create-comment.dto";
 import {FileService, FileType} from "../file/file.service";
-import {Artist, ArtistDocument} from "../artist/artist.schema";
 import {Album, AlbumDocument} from "../album/album.schema";
+import {Artist, ArtistDocument} from "../artist/artist.schema";
+import {CreateCommentDto} from "../comments/dto/create-comment.dto";
+import {Comment, CommentDocument} from "../comments/comment.schema";
 
 
 @Injectable()

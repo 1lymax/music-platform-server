@@ -82,6 +82,7 @@ export class PlaylistService {
         let query: any = { user: id }
         if (q)
             query.name = { $regex: q, $options: "i" };
+        console.log(query)
         return this.playlistModel.find(query)
             .skip(offset)
             .limit(count)

@@ -38,7 +38,7 @@ export class AuthController {
         try {
             res.cookie('access_token', token, {
                 maxAge: 2592000000,
-                sameSite: true,
+                sameSite: 'lax',
                 secure: false
             })
         } catch {

@@ -36,11 +36,10 @@ export class CaslAbilityFactory {
         } else {
             //    can(Action.Read, 'all');
         }
-        console.log(user)
         can(Action.Update, this.playlistModel, { user: user._id });
         can(Action.Delete, this.playlistModel, { user: user._id });
         can(Action.Read, this.playlistModel, { public: true });
-        can(Action.Read, this.playlistModel, { user: user.id });
+        can(Action.Read, this.playlistModel, { user: user._id });
 
 
         return build({
