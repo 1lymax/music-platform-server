@@ -5,6 +5,6 @@ export class CreateAlbumDto {
     readonly name: string;
     readonly year: number;
     readonly picture: string;
-    readonly artistId: Artist;
+    readonly artist: Artist;
     readonly tracks: Track[];
 }
