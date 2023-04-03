@@ -13,10 +13,10 @@ export class Track {
     name: string;
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Artist'})
-    artistId: Artist;
+    artist: Artist;
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Album'})
-    albumId: Album;
+    album: Album;
 
     @Prop()
     text: string;
@@ -29,6 +29,15 @@ export class Track {
 
     @Prop()
     audio: string;
+
+    @Prop()
+    duration: number;
+
+    @Prop()
+    genre: string[];
+
+    @Prop()
+    label: string[];
 
     @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]})
     comments: Comment[];

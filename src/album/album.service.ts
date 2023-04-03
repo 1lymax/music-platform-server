@@ -1,6 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 
+import * as mongoose from "mongoose";
 import {Model, ObjectId} from "mongoose";
 import {Album, AlbumDocument} from "./album.schema";
 import {FileService, FileType} from "../file/file.service";
@@ -16,11 +17,12 @@ export class AlbumService {
     }
 
     async create(dto, picture) {
-        const albumExist = await this.albumModel.find({name: dto.name, albumId: dto.albumId})
+        const albumExist = await this.albumModel.find({name: dto.name, album: dto.album})
         if (albumExist.length > 0) return albumExist
 
         let picturePath
         if (picture) picturePath = this.fileService.createFile(FileType.IMAGE, picture)
+        console.log(dto);
 
         const album = await this.albumModel.create({...dto, picture: picturePath})
         return album
@@ -46,17 +48,17 @@ export class AlbumService {
         if(query.name){
             queryCond.name={$regex:query.name,$options:"i"};
         }
-        if(query.artistId){
-            queryCond.artistId=query.artistId;
+        if(query.artist){
+            queryCond.artist=query.artist;
         }
         const albums = await this.albumModel.find(queryCond)
         return albums
     }
 
     async filterByArtist(query: any): Promise<Album[]> {
-        if (!query.artistId)
+        if (!query.artist || !mongoose.Types.ObjectId.isValid(query.artist))
             return []
-        const albums = await this.albumModel.find({artistId: query.artistId})
+        const albums = await this.albumModel.find({artist: query.artist}).sort({"name": 1})
         return albums
     }
 

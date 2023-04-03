@@ -17,21 +17,23 @@ export class ArtistService {
 
     async create(dto, picture) {
         const artistExist = await this.artistModel.find({name: dto.name})
+        console.log('artistExists', artistExist);
         if (artistExist.length > 0) return artistExist
 
         let picturePath
         if (picture) picturePath = this.fileService.createFile(FileType.IMAGE, picture)
 
         const artist = await this.artistModel.create({...dto, picture: picturePath})
+        console.log('newArtist', artist);
         return artist
     }
 
     async getAll(count = 0, offset = 0): Promise<Artist[]> {
         let tracks
         if (count) {
-            tracks = await this.artistModel.find().skip(Number(offset)).limit(Number(count))
+            tracks = await this.artistModel.find().skip(Number(offset)).limit(Number(count)).sort({"name": 1})
         } else {
-            tracks = await this.artistModel.find().skip(Number(offset))
+            tracks = await this.artistModel.find().skip(Number(offset)).sort({"name": 1})
         }
 
         return tracks

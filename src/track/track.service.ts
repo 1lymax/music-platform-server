@@ -30,13 +30,13 @@ export class TrackService {
 
         const track = await this.trackModel.create({ ...dto, listens: 0, audio: audioPath, picture: picturePath })
 
-        if (dto.artistId) {
-            const artist = await this.artistModel.findById(dto.artistId)
+        if (dto.artist) {
+            const artist = await this.artistModel.findById(dto.artist)
             artist.tracks.push(track)
             artist.save()
         }
-        if (dto.albumId) {
-            const album = await this.albumModel.findById(dto.albumId)
+        if (dto.album) {
+            const album = await this.albumModel.findById(dto.album)
             album.tracks.push(track)
             album.save()
         }
@@ -51,8 +51,8 @@ export class TrackService {
         const tracks = await this.trackModel.find(query)
             .skip(Number(offset))
             .limit(Number(count))
-            .populate('artistId')
-            .populate('albumId')
+            .populate('artist')
+            .populate('album')
         return tracks
     }
 
