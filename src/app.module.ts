@@ -1,18 +1,19 @@
 import * as path from "path";
 import {Module} from "@nestjs/common";
 import {ConfigModule} from "@nestjs/config";
-import {FileModule} from "./file/file.module";
-import {MongooseModule} from "@nestjs/mongoose";
-import {TrackModule} from "./track/track.module";
-import {AlbumModule} from "./album/album.module";
-import {ArtistModule} from "./artist/artist.module";
-import {ServeStaticModule} from "@nestjs/serve-static";
 import {AuthModule} from './auth/auth.module';
+import {FileModule} from "./file/file.module";
 import {UserModule} from './users/user.module';
 import {AppController} from "./app.controller";
-import {AuthController} from "./auth/auth.controller";
-import {PlaylistModule} from "./playlist/playlist.module";
+import {MongooseModule} from "@nestjs/mongoose";
 import { CaslModule } from './casl/casl.module';
+import {TrackModule} from "./track/track.module";
+import {AlbumModule} from "./album/album.module";
+import {GenreModule} from "./genre/genre.module";
+import {ArtistModule} from "./artist/artist.module";
+import {AuthController} from "./auth/auth.controller";
+import {ServeStaticModule} from "@nestjs/serve-static";
+import {PlaylistModule} from "./playlist/playlist.module";
 
 @Module( {
     imports: [
@@ -26,7 +27,8 @@ import { CaslModule } from './casl/casl.module';
         AuthModule,
         UserModule,
         PlaylistModule,
-        CaslModule
+        CaslModule,
+        GenreModule
     ],
     controllers: [AppController, AuthController],
 })
