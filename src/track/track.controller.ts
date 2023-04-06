@@ -4,6 +4,7 @@ import {Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFiles, U
 import {TrackService} from "./track.service";
 import {UpdateAlbumDto} from "../album/dto/update-album.dto";
 import {CreateCommentDto} from "../comments/dto/create-comment.dto";
+import {CreateTrackDto} from "./dto/create-track.dto";
 
 
 @Controller("/track")
@@ -14,35 +15,21 @@ export class TrackController {
 
     @Post()
     @UseInterceptors(AnyFilesInterceptor())
-    // @UseInterceptors(FileFieldsInterceptor([
-    //     { name: 'picture', maxCount: 1 },
-    //     { name: 'audio[0].file', maxCount: 1 },
-    //     { name: 'audio[1].file', maxCount: 1 }
-    // ]))
-    //create(@UploadedFiles() files, @Body() dto: CreateTrackDto) {
     create(@UploadedFiles() files, @Body() dto) {
-        let filesArray = [];
-        let dtoArray = [];
+        let dtoArray: CreateTrackDto[] = [];
         for (const file of files) {
             const [index, key] = file.fieldname.split(".");
-            filesArray[index] = { ...filesArray[index], [key]: file };
+            dtoArray[index] = { ...dtoArray[index], [key]: file };
         }
-        console.log(filesArray);
         for (const [dtoItem, value] of Object.entries(dto)) {
             const [index, key] = dtoItem.split(".");
             dtoArray[index] = { ...dtoArray[index], [key]: value };
         }
+
         console.log(dtoArray);
-        let createdTracks = [];
-        for (let i = 0; i < filesArray.length; i++) {
-            if (filesArray[i].audio)
-                createdTracks.push(this.trackService.create(
-                    dtoArray[i],
-                    filesArray[i].picture? filesArray[i].picture: '',
-                    filesArray[i].audio
-                ));
-        }
-        return createdTracks;
+        return dtoArray.map(dto => false
+            //this.trackService.create(dto)
+        )
     }
 
     @Get()

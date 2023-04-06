@@ -1,4 +1,4 @@
-import {Model, ObjectId} from "mongoose";
+import {Model} from "mongoose";
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Genre, GenreDocument} from "./genre.schema";
@@ -7,6 +7,7 @@ import {CreateGenreDto} from "./dto/create-genre.dto";
 
 @Injectable()
 export class GenreService {
+    documentId = "642d1d29773ed537572471e6";
 
     constructor(
         @InjectModel(Genre.name) private genreModel: Model<GenreDocument>,
@@ -16,30 +17,33 @@ export class GenreService {
     ) {
     }
 
-    async create(dto: CreateGenreDto): Promise<Genre> {
-        const genre = await this.genreModel.create({ ...dto})
-        return genre
+    async create(dto: CreateGenreDto) {
+        const dtoArray = dto.name.split(",");
+        let document;
+        if (true)
+            document = await this.genreModel.findByIdAndUpdate(this.documentId, {
+                $addToSet: {
+                    name: { $each: dtoArray }
+                }
+            }, { new: true });
+        return document;
     }
 
-    async getAll(q, count, offset): Promise<Genre[]> {
-        const genre = await this.genreModel.find()
-            .skip(Number(offset))
-            .limit(Number(count))
-        return genre
+    async getAll(): Promise<Genre['name']> {
+        const genre = await this.genreModel.findById(this.documentId)
+        return genre.name;
     }
 
-    async getOne(id: ObjectId): Promise<Genre> {
-        const genre = await this.genreModel.findById(id)
-        return genre
+    async delete(name: string): Promise<Genre> {
+        const updatedGenre = await this.genreModel.findByIdAndUpdate(this.documentId,{
+            $pull : { name }
+        });
+        return updatedGenre;
     }
 
-    async delete(id: ObjectId): Promise<Genre> {
-        const deletedGenre = await this.genreModel.findByIdAndDelete(id)
-        return deletedGenre
-    }
-
+    // TODO
     async update(id, dto) {
-        const genre = await this.genreModel.findByIdAndUpdate(id, dto, { new: true })
-        return genre
+        const genre = await this.genreModel.findByIdAndUpdate(id, dto, { new: true });
+        return genre;
     }
 }

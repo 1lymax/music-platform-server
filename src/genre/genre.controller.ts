@@ -1,6 +1,14 @@
-import {ObjectId} from "mongoose";
 import {AnyFilesInterceptor} from "@nestjs/platform-express";
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, UseInterceptors} from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    UseInterceptors
+} from "@nestjs/common";
 import {GenreService} from "./genre.service";
 import {UpdateAlbumDto} from "../album/dto/update-album.dto";
 
@@ -14,28 +22,17 @@ export class GenreController {
     @UseInterceptors(AnyFilesInterceptor())
     @Post()
     create(@Body() dto) {
-        console.log(dto);
         return this.genreService.create(dto);
     }
 
-
     @Get()
-    getAll(@Query("count") count: number = 10,
-           @Query("offset") offset: number = 0,
-           @Query("q") q: string
-    ) {
-        return this.genreService.getAll(q, count, offset);
+    getAll() {
+        return this.genreService.getAll();
     }
 
-    @Get(":id")
-    getOne(@Param("id") id: ObjectId) {
-        return this.genreService.getOne(id);
-    }
-
-
-    @Delete(":id")
-    delete(@Param("id") id: ObjectId) {
-        return this.genreService.delete(id);
+    @Delete(":name")
+    delete(@Param("name") name: string) {
+        return this.genreService.delete(name);
     }
 
     @Put(":id")
